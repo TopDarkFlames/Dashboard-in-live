@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Activity, Bell, Box, CheckCircle2, ChevronRight, CircleAlert, Cpu, Database, LayoutDashboard, Menu, RefreshCw, Server, Settings, Wifi, X } from 'lucide-react';
 
 type ServerItem = { id: number; name: string; hostname: string; ipAddress: string; status: string; cpuUsage: number; memoryUsage: number; diskUsage: number; uptime: string };
-type ServiceItem = { id: number; name: string; status: string; responseTime: number };
+type ServiceItem = { id: number; name: string; status: string; responseTime: number; lastCheck?: string };
 type Dashboard = { serversOnline: number; serversTotal: number; servicesOnline: number; servicesTotal: number; averageCpu: number; averageMemory: number; servers: ServerItem[]; services: ServiceItem[]; alerts: { title: string; detail: string; severity: string; time: string }[] };
 
 const fallback: Dashboard = { serversOnline: 3, serversTotal: 4, servicesOnline: 5, servicesTotal: 6, averageCpu: 30, averageMemory: 52, servers: [], services: [], alerts: [] };

@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
@@ -83,10 +85,62 @@ app.MapPost("/api/services", (CreateServiceRequest request) =>
 });
 app.MapDelete("/api/services/{id:int}", (int id) => services.RemoveAll(s => s.Id == id) > 0 ? Results.NoContent() : Results.NotFound());
 
+using var monitorCancellation = new CancellationTokenSource();
+app.Lifetime.ApplicationStopping.Register(() => monitorCancellation.Cancel());
+_ = MonitorServicesAsync(monitorCancellation.Token);
+
 app.Run();
 
+async Task MonitorServicesAsync(CancellationToken cancellationToken)
+{
+    using var client = new HttpClient { Timeout = TimeSpan.FromSeconds(5) };
+    using var timer = new PeriodicTimer(TimeSpan.FromSeconds(30));
+
+    do
+    {
+        await CheckServicesAsync(client, cancellationToken);
+    }
+    while (await timer.WaitForNextTickAsync(cancellationToken));
+}
+
+async Task CheckServicesAsync(HttpClient client, CancellationToken cancellationToken)
+{
+    foreach (var service in services.ToArray())
+    {
+        var stopwatch = Stopwatch.StartNew();
+        try
+        {
+            using var response = await client.GetAsync(service.Url, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+            stopwatch.Stop();
+            var index = services.FindIndex(item => item.Id == service.Id);
+            if (index >= 0)
+                services[index] = service with
+                {
+                    Status = response.IsSuccessStatusCode ? "Online" : "Offline",
+                    ResponseTime = (int)stopwatch.ElapsedMilliseconds,
+                    LastCheck = DateTimeOffset.UtcNow
+                };
+        }
+        catch (HttpRequestException)
+        {
+            MarkServiceOffline(service);
+        }
+        catch (TaskCanceledException) when (!cancellationToken.IsCancellationRequested)
+        {
+            MarkServiceOffline(service);
+        }
+    }
+}
+
+void MarkServiceOffline(ServiceItem service)
+{
+    var index = services.FindIndex(item => item.Id == service.Id);
+    if (index >= 0)
+        services[index] = service with { Status = "Offline", ResponseTime = 0, LastCheck = DateTimeOffset.UtcNow };
+}
+
 record Server(int Id, string Name, string Hostname, string IpAddress, string Status, int CpuUsage, int MemoryUsage, int DiskUsage, string Uptime, DateTimeOffset LastSeen);
-record ServiceItem(int Id, string Name, string Url, string Status, int ResponseTime, int ServerId);
+record ServiceItem(int Id, string Name, string Url, string Status, int ResponseTime, int ServerId, DateTimeOffset? LastCheck = null);
 record CreateServerRequest(string Name, string IpAddress, string? Hostname);
 record UpdateServerRequest(string Name, string IpAddress, string? Hostname);
 record CreateServiceRequest(string Name, string Url, int ServerId);

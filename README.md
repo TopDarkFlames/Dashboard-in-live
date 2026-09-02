@@ -395,6 +395,8 @@ A fundação da versão `v0.1` já está implementada no repositório:
 
 Os dados ainda são mockados. A próxima etapa é persistir servidores e serviços no PostgreSQL e substituir os endpoints temporários por dados reais.
 
+O backend já executa health checks HTTP periódicos dos serviços cadastrados. Cada verificação atualiza o status, a latência e o horário da última checagem. As URLs do seed são demonstrativas e devem ser substituídas por endereços acessíveis no seu homelab.
+
 ### v0.1 — Foundation
 
 - [ ] Criar estrutura inicial do projeto
