@@ -6,3 +6,4 @@
 .status-pill.error { color: #ef9a91; background: #422426; }
 .status-pill.error span { background: #df746b; }
 @keyframes spin { to { transform: rotate(360deg); } }
+.last-check{display:block;color:#575660;font-size:8px;margin-top:7px}
