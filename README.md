@@ -397,6 +397,44 @@ Os dados ainda são mockados. A próxima etapa é persistir servidores e serviç
 
 O backend já executa health checks HTTP periódicos dos serviços cadastrados. Cada verificação atualiza o status, a latência e o horário da última checagem. As URLs do seed são demonstrativas e devem ser substituídas por endereços acessíveis no seu homelab.
 
+### Categorias e etapas do projeto
+
+#### 1. Fundação — concluída
+
+React, TypeScript, Vite, ASP.NET Core, Docker Compose, PostgreSQL preparado, layout responsivo e dashboard inicial.
+
+#### 2. Monitoramento de serviços — em andamento
+
+Health checks HTTP, status online/offline, latência, atualização automática e cadastro visual de servidores e serviços. Os cadastros já funcionam pela API, mas ainda permanecem apenas em memória até a etapa de persistência.
+
+#### 3. Persistência — próxima etapa
+
+Tabelas PostgreSQL, migrations, repositórios e dados persistentes para servidores e serviços.
+
+#### 4. Gerenciamento de infraestrutura — iniciado
+
+Cadastro de servidores e serviços iniciado no dashboard. Ainda faltam telas dedicadas, edição, remoção e gerenciamento de containers.
+
+#### 5. Métricas
+
+Coleta de CPU, memória, armazenamento, uptime e gráficos históricos.
+
+#### 6. Integração Docker
+
+Listagem de containers, métricas e ações de iniciar, parar e reiniciar.
+
+#### 7. Alertas e incidentes
+
+Alertas por indisponibilidade e limites de recursos, histórico e resolução de incidentes.
+
+#### 8. Segurança e integrações externas
+
+Autenticação, permissões, TrueNAS, Tailscale e configuração de produção.
+
+#### 9. Release 1.0
+
+Documentação final, backup, instalação reproduzível e release estável.
+
 ### v0.1 — Foundation
 
 - [ ] Criar estrutura inicial do projeto
@@ -414,11 +452,11 @@ O backend já executa health checks HTTP periódicos dos serviços cadastrados. 
 
 ### v0.2 — Services
 
-- [ ] Cadastro de servidores
-- [ ] Cadastro de serviços
-- [ ] Health checks HTTP
-- [ ] Detecção online/offline
-- [ ] Medição de response time
+- [x] Cadastro de servidores
+- [x] Cadastro de serviços
+- [x] Health checks HTTP
+- [x] Detecção online/offline
+- [x] Medição de response time
 
 ### v0.3 — Metrics
 
